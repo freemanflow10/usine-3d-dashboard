@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Usine des projets · Dashboard 3D</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --bg:#0e1116; --card:#171b23; --card2:#1f2430; --fg:#eef1f6; --mut:#9aa3b3; --line:#2c3240; --acc:#f5c400; --ok:#3ddc84; --warn:#ffb020; --err:#ff4d4d; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; }
+  body { background:var(--bg); color:var(--fg); font:16px/1.5 system-ui,-apple-system,sans-serif; overflow:hidden; }
+  #app { position:fixed; inset:0; }
+  canvas { display:block; }
+  /* HUD */
+  .hud { position:fixed; left:14px; top:14px; z-index:10; display:flex; gap:8px; flex-wrap:wrap; align-items:center; pointer-events:none; }
+  .chip { background:rgba(14,17,22,.8); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:5px 11px; font-size:13px; }
+  .chip b { color:var(--acc); }
+  .chip .ok { color:var(--ok); font-weight:700; }
+  /* fiches ateliers */
+  .board { position:fixed; left:14px; top:74px; z-index:10; display:grid; gap:8px; width:236px; }
+  .wk { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; cursor:pointer; text-align:left; color:var(--fg); font:inherit; transition:border-color .2s, background .2s; }
+  .wk:hover { border-color:var(--acc); background:var(--card2); }
+  .wk.on { border-color:var(--acc); background:var(--card2); }
+  .wk .t { font-weight:800; font-size:15px; display:flex; gap:8px; align-items:center; }
+  .wk .s { font-size:13px; color:var(--mut); margin-top:2px; }
+  .wk .k { margin-left:auto; font:700 12px/1 system-ui; }
+  .wok { color:var(--ok); } .wwarn { color:var(--warn); } .werr { color:var(--err); }
+  /* Ruban éléments 3D + fiche */
+  .bottom { position:fixed; left:14px; right:14px; bottom:14px; z-index:10; display:flex; gap:12px; align-items:flex-end; }
+  .ribbon { display:flex; gap:8px; flex-wrap:wrap; }
+  .tag3d { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:5px 10px; font-size:12px; color:var(--mut); }
+  .tag3d b { color:var(--fg); }
+  .tag3d.on { border-color:var(--acc); color:var(--fg); }
+  .detail { max-width:380px; background:rgba(14,17,22,.92); backdrop-filter:blur(8px); border:1px solid var(--acc); border-radius:14px; padding:12px 14px; }
+  .detail h3 { margin:0 0 4px; font-size:18px; }
+  .detail p { margin:0; color:var(--mut); font-size:14px; }
+  .detail .kv { display:grid; grid-template-columns:1fr auto; gap:3px 12px; margin-top:6px; font-size:14px; }
+  .detail .kv b { text-align:right; }
+  .detail .act { margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; }
+  .detail button { background:var(--acc); color:#111; border:0; border-radius:8px; padding:7px 14px; font-weight:800; cursor:pointer; }
+  .detail button.ghost { background:#2c3240; color:var(--fg); }
+  /* boutons contrôles */
+  .controls { position:fixed; right:14px; top:14px; z-index:10; display:flex; gap:8px; }
+  .controls button { background:var(--card); color:var(--fg); border:1px solid var(--line); border-radius:9px; padding:8px 12px; font-weight:700; cursor:pointer; }
+  .controls button.on { border-color:var(--acc); color:var(--acc); }
+  .paused-banner { position:fixed; left:14px; top:14px; z-index:20; background:rgba(255,176,32,.15); border:1px solid var(--warn); color:var(--warn); border-radius:8px; padding:3px 10px; font-size:12px; font-weight:700; display:none; }
+  body.paused .paused-banner { display:block; }
+  .mobile { display:none; }
+  @media (max-width:760px){
+    .board { position:static; width:auto; grid-template-columns:repeat(2,minmax(0,1fr)); margin-top:10px; }
+    .hud { position:static; }
+    .scroller { position:absolute; inset:0; overflow:auto; padding:14px; }
+    #app { position:fixed; }
+    .bottom { position:relative; }
+    .controls { position:static; }
+  }
+</style>
+</head>
+<body>
+<div class="hud">
+  <div class="chip">🏭 <b id="sel-label">Usine — vue générale</b></div>
+  <div class="chip" id="motion-chip">🎬 <span class="ok">En mouvement</span></div>
+</div>
+<div class="paused-banner">Animations en pause</div>
+<div class="controls" id="controls"></div>
+<div class="board" id="board"></div>
+<div class="bottom">
+  <div class="detail" id="detail"></div>
+</div>
+<div id="app"></div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
